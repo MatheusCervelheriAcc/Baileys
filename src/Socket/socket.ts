@@ -126,11 +126,20 @@ export const makeSocket = (config: SocketConfig) => {
 
 	/** send a binary node */
 	const sendNode = (frame: BinaryNode) => {
-		if (logger.level === 'trace') {
-			logger.trace({ xml: binaryNodeToString(frame), msg: 'xml send' })
+		let toSend = frame
+		if(config.transformOutgoingNode && frame.tag === 'message') {
+			try {
+				toSend = config.transformOutgoingNode(frame)
+			} catch(err) {
+				logger.warn({ err }, 'failed to transform outgoing node')
+			}
 		}
 
-		const buff = encodeBinaryNode(frame)
+		if (logger.level === 'trace') {
+			logger.trace({ xml: binaryNodeToString(toSend), msg: 'xml send' })
+		}
+
+		const buff = encodeBinaryNode(toSend)
 		return sendRawMessage(buff)
 	}
 

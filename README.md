@@ -1293,6 +1293,34 @@ sock.ws.on('CB:edge_routing,id:abcd', (node: BinaryNode) => { })
 sock.ws.on('CB:edge_routing,id:abcd,routing_info', (node: BinaryNode) => { })
 ```
 
+### Outgoing Node Transformer
+
+Baileys provides a hook to intercept and modify outgoing `BinaryNode`s before they are sent to the socket. This is useful for advanced scenarios where you need to inject metadata into messages.
+
+**What is `transformOutgoingNode`**
+
+It's an optional function in the `WASocketOptions` that you can provide when creating a socket. The function receives the outgoing `BinaryNode` and should return a `BinaryNode`.
+
+**Example of use**
+
+```ts
+import makeWASocket, { OutgoingNodeTransformer, BinaryNode } from '@whiskeysockets/baileys'
+
+const transformer: OutgoingNodeTransformer = (node: BinaryNode) => {
+  // ex.: log and return without modification
+  console.log('Transforming outgoing node:', node)
+  return node
+}
+
+const sock = makeWASocket({
+  // ... other options
+  transformOutgoingNode: transformer
+})
+```
+
+> [!WARNING]
+> The `transformOutgoingNode` hook is only called for nodes with `node.tag === 'message'`.
+
 # License
 Copyright (c) 2025 Rajeh Taher/WhiskeySockets
 

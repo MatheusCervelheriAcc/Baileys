@@ -1,11 +1,14 @@
 import type { Agent } from 'https'
 import type { URL } from 'url'
-import { proto } from '../../WAProto/index.js'
 import type { ILogger } from '../Utils/logger'
+import { proto } from '../../WAProto/index.js'
+import type { BinaryNode } from '../WABinary'
 import type { AuthenticationState, LIDMapping, SignalAuthState, TransactionCapabilityOptions } from './Auth'
 import type { GroupMetadata } from './GroupMetadata'
 import { type MediaConnInfo, type WAMessageKey } from './Message'
 import type { SignalRepositoryWithLIDStore } from './Signal'
+
+export type OutgoingNodeTransformer = (node: BinaryNode) => BinaryNode
 
 export type WAVersion = [number, number, number]
 export type WABrowserDescription = [string, string, string]
@@ -147,4 +150,5 @@ export type SocketConfig = {
 		logger: ILogger,
 		pnToLIDFunc?: (jids: string[]) => Promise<LIDMapping[] | undefined>
 	) => SignalRepositoryWithLIDStore
+	transformOutgoingNode?: OutgoingNodeTransformer
 }
